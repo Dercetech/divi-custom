@@ -2,7 +2,9 @@
 
 For my website [Treehouse Solar](https://treehouse_solar), I needed the capacity to filter the Divi Blog module by both category and tag. This customization allows for more specific content display on various pages.
 
-## Use Case Examples
+## Examples
+
+![Divi Blog Filter by Tag](./doc/diviblog-filter-by-tag.png)
 
 ### AC60's Review Page
 
