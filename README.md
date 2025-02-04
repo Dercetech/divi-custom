@@ -1,6 +1,6 @@
 # Divi Blog Module Customization
 
-For my website [Treehouse Solar](https://treehouse_solar), I needed the capacity to filter the Divi Blog module by both category and tag. This customization allows for more specific content display on various pages.
+For my website [Treehouse Solar](https://treehouse.solar), I needed the capacity to filter the Divi Blog module by both category and tag. This customization allows for more specific content display on various pages.
 
 ## Examples
 
