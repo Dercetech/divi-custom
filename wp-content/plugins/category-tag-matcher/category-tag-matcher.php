@@ -292,6 +292,61 @@ function toggle_post_tag() {
       wp_set_post_tags($post_id, $new_tags, false); // Remove tag
   }
 
+  // New functionality: Update related use case post
+  if ($checked) {
+      // Get the power station's custom field value
+      $powerstation_tag = get_post_meta($post_id, 'powerstation_tag', true);
+
+      // Find the related use case post
+      $usecase_query = new WP_Query(array(
+          'category_name' => 'use-cases',
+          'meta_key'      => 'usecase_tag',
+          'meta_value'    => $tag->slug,
+          'post_status'   => 'publish',
+          'posts_per_page' => 1,
+      ));
+
+      if ($usecase_query->have_posts()) {
+          $usecase_query->the_post();
+          $usecase_post_id = get_the_ID();
+
+          // Update the use case post's custom field with the power station's custom field value
+            wp_set_post_tags($usecase_post_id, $powerstation_tag, true);
+
+          wp_reset_postdata();
+      }
+  }
+
+  else {
+      // Get the power station's custom field value
+      $powerstation_tag = get_post_meta($post_id, 'powerstation_tag', true);
+
+      // Find the related use case post
+      $usecase_query = new WP_Query(array(
+          'category_name' => 'use-cases',
+          'meta_key'      => 'usecase_tag',
+          'meta_value'    => $tag->slug,
+          'post_status'   => 'publish',
+          'posts_per_page' => 1,
+      ));
+
+      if ($usecase_query->have_posts()) {
+          $usecase_query->the_post();
+          $usecase_post_id = get_the_ID();
+
+          // Remove the tag from the use case post's custom field
+          $current_tags = wp_get_post_tags($usecase_post_id, ['fields' => 'slugs']);
+          $new_tags = array_diff($current_tags, [$powerstation_tag]);
+          wp_set_post_tags($usecase_post_id, $new_tags, false);
+          wp_send_json_error(['message' => $new_tags]);
+
+          wp_reset_postdata();
+      }
+      else {
+          wp_send_json_error(['message' => 'Use case post not found.']);
+      }
+  }
+
   wp_send_json_success(['message' => 'Tag updated successfully.']);
 }
 
