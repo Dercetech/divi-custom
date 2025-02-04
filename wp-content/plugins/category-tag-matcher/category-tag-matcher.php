@@ -43,16 +43,93 @@ function main_page() {
   <div class="wrap">
       <h1>Treehouse Solar</h1>
       
-      <h2>Power stations: assign use cases</h2>
+      <h2>Assign power stations to use cases</h2>
       <table class="wp-list-table widefat fixed striped">
+        <thead>
+          <tr>
+            <th scope="col" id="title" class="manage-column column-title column-primary">Use case</th>
+            <?php
+            $power_stations = get_posts(array(
+              'category_name' => 'power-stations',
+              'post_status'   => 'publish',
+              'posts_per_page' => -1,
+            ));
+            foreach ($power_stations as $power_station) {
+
+                $title = get_post_meta($power_station->ID, 'powerstation_tag', true);
+                if (!$title) {
+                  $title = explode(' ', $power_station->post_title)[0];
+                }
+
+              echo '<th scope="col" class="manage-column column-power-station">' . $title . '</th>';
+            }
+            ?>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          $use_cases = get_posts(array(
+            'category_name' => 'use-cases',
+            'post_status'   => 'publish',
+            'posts_per_page' => -1,
+          ));
+          foreach ($use_cases as $use_case) {
+            echo '<tr>';
+            echo '<td class="title column-title has-row-actions column-primary"><strong>' . esc_html($use_case->post_title) . '</strong></td>';
+            foreach ($power_stations as $power_station) {
+              $checked = has_tag($power_station->post_name, $use_case->ID) ? 'checked' : '';
+              $custom_field_value = get_post_meta($use_case->ID, 'usecase_tag', true);
+              $matching_tag = get_term_by('slug', $custom_field_value, 'post_tag');
+
+              echo '<td class="power-station column-power-station">
+                  <input type="checkbox" class="usecase-powerstation-checkbox" data-usecase-id="' . esc_attr($matching_tag->term_id) . '" data-powerstation-id="' . esc_attr($power_station->ID) . '" ' . esc_attr($checked) . '>
+                  </td>';
+            }
+            echo '</tr>';
+          }
+          ?>
+        </tbody>
+      </table>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          document.querySelectorAll('.usecase-powerstation-checkbox').forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+              let usecaseId = this.dataset.usecaseId;
+              let powerstationId = this.dataset.powerstationId;
+              let checked = this.checked ? 1 : 0;
+
+              fetch(ajaxurl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                  action: 'toggle_post_tag',
+                  post_id: powerstationId, // the API expects a the power station id, the "post_id" can be misleading here
+                  tag_id: usecaseId,
+                  checked: checked,
+                  security: '<?php echo wp_create_nonce("toggle_post_tag_nonce"); ?>'
+                })
+              })
+              .then(response => response.json())
+              .then(data => console.log(data.message))
+              .catch(error => console.error('Error:', error));
+            });
+          });
+        });
+      </script>
+
+      <h2>Power stations management</h2>
+      <table class="wp-list-table widefat fixed striped" style="max-width: 600px;">
           <thead>
               <tr>
-                  <th scope="col" id="title" class="manage-column column-title column-primary">Power station</th>
-                  <th scope="col" class="manage-column column-custom-field">Tag</th>
+                  <th scope="col" id="title" class="manage-column column-title column-primary">power station</th>
+                  <th scope="col" class="manage-column column-custom-field">tag</th>
                   <?php
+                  /*
                   foreach ($filtered_tags as $tag) {
                       echo '<th scope="col" class="manage-column column-tag">' . esc_html($tag->name) . '</th>';
                   }
+                      */
                   ?>
               </tr>
           </thead>
@@ -77,12 +154,14 @@ function main_page() {
                               <input type="text" class="custom-field-input" data-post-id="<?php echo esc_attr($post_id); ?>" value="<?php echo esc_attr($custom_field_value); ?>">
                           </td>
                           <?php
+                          /*
                             foreach ($filtered_tags as $tag) {
                                 $has_tag = has_tag($tag->slug) ? 'checked' : '';
                                 echo '<td class="tag column-tag">
                                         <input type="checkbox" class="tag-checkbox" data-post-id="' . esc_attr($post_id) . '" data-tag-id="' . esc_attr($tag->term_id) . '" ' . esc_attr($has_tag) . '>
                                       </td>';
                             }
+                          */
                           ?>
                       </tr>
                       <?php
@@ -148,12 +227,12 @@ function main_page() {
     </script>
 
     <h2>Use cases management</h2>
-    <table class="wp-list-table widefat fixed striped">
+    <table class="wp-list-table widefat fixed striped" style="max-width: 720px;">
       <thead>
         <tr>
-          <th scope="col" id="title" class="manage-column column-title column-primary">Use case</th>
-          <th scope="col" class="manage-column column-tag">Tag</th>
-          <th scope="col" class="manage-column column-tag">Actions</th>
+          <th scope="col" id="title" class="manage-column column-title column-primary">use case</th>
+          <th scope="col" class="manage-column column-tag">tag</th>
+          <th scope="col" class="manage-column column-tag">actions</th>
         </tr>
       </thead>
       <tbody>
@@ -261,6 +340,7 @@ function main_page() {
 
 // Hook the function to the admin menu
 add_action('admin_menu', 'create_admin_menu_entry');
+
 
 // AJAX handler to update post tags
 function toggle_post_tag() {
