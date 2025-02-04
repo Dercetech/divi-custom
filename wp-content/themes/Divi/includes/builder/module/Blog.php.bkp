@@ -5,7 +5,7 @@ require_once 'helpers/Overlay.php';
 class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 	/**
 	 * Track if the module is currently rendering to prevent unnecessary rendering and recursion.
-	 *
+	 * test
 	 * @var bool
 	 */
 	protected static $rendering = false;
@@ -347,7 +347,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				'default'          => 10,
 			),
 			'include_categories'            => array(
-				'label'            => esc_html__( 'Included Categories', 'et_builder' ),
+				'label'            => esc_html__( 'Included Categoriez', 'et_builder' ),
 				'type'             => 'categories',
 				'meta_categories'  => array(
 					'all'     => esc_html__( 'All Categories', 'et_builder' ),
@@ -367,8 +367,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					'post_type'        => 'post',
 				),
 			),
-
-				// JEM: Add a "filter by tag" input field in the admin panel of the Divi Blog module 
 				'filter_tag' => array( // JEM
 				'label'            => esc_html__( 'Filter by Tag', 'et_builder' ),
 				'type'             => 'text',
@@ -382,23 +380,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					'use_current_loop' => 'off',
 				),
 			),
-
-			// JEM: add an admin panel entry to filter blog by tag using checkboxes (WIP, currently broken)
-			// 'filter_tag' => array(
-			// 	'label'            => esc_html__( 'Filter by Tags', 'et_builder' ),
-			// 	'type'             => 'multiple_checkboxes',
-			// 	'option_category'  => 'basic_option',
-			// 	'options'          => $this->get_available_tags(),
-			// 	'description'      => esc_html__( 'Select tags to filter the posts.', 'et_builder' ),
-			// 	'toggle_slug'      => 'main_content',
-			// 	'computed_affects' => array(
-			// 		'__posts',
-			// 	),
-			// 	'show_if'          => array(
-			// 		'use_current_loop' => 'off',
-			// 	),
-			// ),
-			
 			'meta_date'                     => array(
 				'label'            => esc_html__( 'Date Format', 'et_builder' ),
 				'type'             => 'text',
@@ -681,36 +662,36 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				'mobile_options'  => true,
 				'sticky'          => true,
 			),
-			'__posts'                       => array(
-				'type'                => 'computed',
-				'computed_callback'   => array( 'ET_Builder_Module_Blog', 'get_blog_posts' ),
-				'computed_depends_on' => array(
-					'use_current_loop',
-					'post_type',
-					'fullwidth',
-					'posts_number',
-					'include_categories',
-					'meta_date',
-					'show_thumbnail',
-					'show_content',
-					'show_more',
-					'show_author',
-					'show_date',
-					'show_categories',
-					'show_comments',
-					'show_excerpt',
-					'use_manual_excerpt',
-					'excerpt_length',
-					'show_pagination',
-					'offset_number',
-					'use_overlay',
-					'hover_icon',
-					'hover_icon_tablet',
-					'hover_icon_phone',
-					'header_level',
+      '__posts'                       => array(
+        'type'                => 'computed',
+        'computed_callback'   => array( 'ET_Builder_Module_Blog', 'get_blog_posts' ),
+        'computed_depends_on' => array(
+          'use_current_loop',
+          'post_type',
+          'fullwidth',
+          'posts_number',
+          'include_categories',
+          'meta_date',
+          'show_thumbnail',
+          'show_content',
+          'show_more',
+          'show_author',
+          'show_date',
+          'show_categories',
+          'show_comments',
+          'show_excerpt',
+          'use_manual_excerpt',
+          'excerpt_length',
+          'show_pagination',
+          'offset_number',
+          'use_overlay',
+          'hover_icon',
+          'hover_icon_tablet',
+          'hover_icon_phone',
+          'header_level',
           'filter_tag', // JEM
-					'__page',
-				),
+          '__page',
+        ),
 			),
 			'__page'                        => array(
 				'type'              => 'computed',
