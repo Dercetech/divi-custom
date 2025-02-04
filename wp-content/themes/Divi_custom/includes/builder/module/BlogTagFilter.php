@@ -2,10 +2,10 @@
 
 require_once 'helpers/Overlay.php';
 
-class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
+class ET_Builder_Module_Blog_Tag_Filter extends ET_Builder_Module_Type_PostBased {
 	/**
 	 * Track if the module is currently rendering to prevent unnecessary rendering and recursion.
-	 * test
+	 *
 	 * @var bool
 	 */
 	protected static $rendering = false;
@@ -13,7 +13,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 	function init() {
 		$this->name             = esc_html__( 'Blog', 'et_builder' );
 		$this->plural           = esc_html__( 'Blogs', 'et_builder' );
-		$this->slug             = 'et_pb_blog';
+		$this->slug             = 'et_pb_blog_tag_filter';
 		$this->vb_support       = 'on';
 		$this->main_css_element = '%%order_class%% .et_pb_post';
 
@@ -347,7 +347,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				'default'          => 10,
 			),
 			'include_categories'            => array(
-				'label'            => esc_html__( 'Included Categoriez', 'et_builder' ),
+				'label'            => esc_html__( 'Included Categories', 'et_builder' ),
 				'type'             => 'categories',
 				'meta_categories'  => array(
 					'all'     => esc_html__( 'All Categories', 'et_builder' ),
@@ -365,19 +365,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				'show_if'          => array(
 					'use_current_loop' => 'off',
 					'post_type'        => 'post',
-				),
-			),
-				'filter_tag' => array( // JEM
-				'label'            => esc_html__( 'Filter by Tag', 'et_builder' ),
-				'type'             => 'text',
-				'option_category'  => 'basic_option',
-				'description'      => esc_html__( 'Enter a tag to filter the posts.', 'et_builder' ),
-				'toggle_slug'      => 'main_content',
-				'computed_affects' => array(
-					'__posts',
-				),
-				'show_if'          => array(
-					'use_current_loop' => 'off',
 				),
 			),
 			'meta_date'                     => array(
@@ -662,36 +649,35 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				'mobile_options'  => true,
 				'sticky'          => true,
 			),
-      '__posts'                       => array(
-        'type'                => 'computed',
-        'computed_callback'   => array( 'ET_Builder_Module_Blog', 'get_blog_posts' ),
-        'computed_depends_on' => array(
-          'use_current_loop',
-          'post_type',
-          'fullwidth',
-          'posts_number',
-          'include_categories',
-          'meta_date',
-          'show_thumbnail',
-          'show_content',
-          'show_more',
-          'show_author',
-          'show_date',
-          'show_categories',
-          'show_comments',
-          'show_excerpt',
-          'use_manual_excerpt',
-          'excerpt_length',
-          'show_pagination',
-          'offset_number',
-          'use_overlay',
-          'hover_icon',
-          'hover_icon_tablet',
-          'hover_icon_phone',
-          'header_level',
-          'filter_tag', // JEM
-          '__page',
-        ),
+			'__posts'                       => array(
+				'type'                => 'computed',
+				'computed_callback'   => array( 'ET_Builder_Module_Blog', 'get_blog_posts' ),
+				'computed_depends_on' => array(
+					'use_current_loop',
+					'post_type',
+					'fullwidth',
+					'posts_number',
+					'include_categories',
+					'meta_date',
+					'show_thumbnail',
+					'show_content',
+					'show_more',
+					'show_author',
+					'show_date',
+					'show_categories',
+					'show_comments',
+					'show_excerpt',
+					'use_manual_excerpt',
+					'excerpt_length',
+					'show_pagination',
+					'offset_number',
+					'use_overlay',
+					'hover_icon',
+					'hover_icon_tablet',
+					'hover_icon_phone',
+					'header_level',
+					'__page',
+				),
 			),
 			'__page'                        => array(
 				'type'              => 'computed',
@@ -730,9 +716,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		return $fields;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	/**
 	 * Get blog posts for blog module
 	 *
@@ -759,7 +742,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			'post_type'                     => '',
 			'fullwidth'                     => '',
 			'posts_number'                  => '',
-      'filter_tag'                    => '', // JEM
 			'include_categories'            => '',
 			'meta_date'                     => '',
 			'show_thumbnail'                => '',
@@ -887,10 +869,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			}
 		}
 
-		// JEM
-		if ( ! empty( $args['filter_tag'] ) ) {
-			$query_args['tag'] = sanitize_text_field( $args['filter_tag'] );
-		}
 
 		// Get query
 		$query = new WP_Query( $query_args );
@@ -930,7 +908,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				echo '<div class="et_pb_salvattore_content" data-columns>';
 			}
 
-			// JEM this is the backoffice part, aka admin area
 			while ( $query->have_posts() ) {
 				$query->the_post();
 				ET_Post_Stack::replace( $post );
@@ -959,11 +936,7 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 					$no_thumb_class = '';
 				}
 
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				// ADMIN AREA PRINT OUTPUT ////////////////////////////////////////////////////////////////////////////////////////
-
-				// JEM: confirm with visual output that this is the admin area
-
+				// Print output
 				?>
 					<article id="" <?php post_class( 'et_pb_post clearfix' . $no_thumb_class . $overlay_class ); ?>>
 						<?php
@@ -1180,9 +1153,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		return $posts;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	/**
 	 * Render pagination element
 	 *
@@ -1232,9 +1202,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 	public static function filter_pagination_url( $result ) {
 		return add_query_arg( 'et_blog', '', $result );
 	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// PUBLIC AREA PRINT OUTPUT ////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Renders the module output.
@@ -1286,7 +1253,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 		$show_author        = $this->props['show_author'];
 		$show_date          = $this->props['show_date'];
 		$show_categories    = $this->props['show_categories'];
-		$filter_tag          = $this->props['filter_tag']; // JEM this is the actual "filter tag" stored in the database for this module
 		$show_comments      = $this->props['show_comments'];
 		$show_excerpt       = $this->props['show_excerpt'];
 		$use_manual_excerpt = $this->props['use_manual_excerpt'];
@@ -1442,11 +1408,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 			$args['post__not_in'] = array( $main_query_post->ID );
 		}
 
-		// JEM: must filter the query by tag (this is the frontend part)
-		if ( ! empty( $filter_tag ) ) {
-			$args['tag'] = sanitize_text_field( $filter_tag );
-		}
-
 		// Images: Add CSS Filters and Mix Blend Mode rules (if set)
 		if ( array_key_exists( 'image', $this->advanced_fields ) && array_key_exists( 'css', $this->advanced_fields['image'] ) ) {
 			$this->add_classname(
@@ -1554,7 +1515,6 @@ class ET_Builder_Module_Blog extends ET_Builder_Module_Type_PostBased {
 				echo '<div class="et_pb_salvattore_content" ' . et_core_intentionally_unescaped( $attribute, 'fixed_string' ) . '>';
 			}
 
-			// JEM: this is the front end display of posts, it needs to be filtered using the tags
 			while ( have_posts() ) {
 				the_post();
 				ET_Post_Stack::replace( $post );

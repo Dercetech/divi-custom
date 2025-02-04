@@ -28,6 +28,7 @@ This is a quick and dirty first version. Future updates should include a checkbo
 The changes were made to the following files:
 
 - `/Users/jem/Desktop/workspace/divi-custom/wp-content/themes/Divi/includes/builder/module/Blog.php`
-- `/Users/jem/Desktop/workspace/divi-custom/wp-content/themes/Divi/includes/builder/module/Blog_WIP.php`
+
+Look for comment `JEM` in order to locate changes brought to the original code.
 
 These changes allow the Divi Blog module to filter posts by both category and tag, enhancing the content display capabilities of the website.
